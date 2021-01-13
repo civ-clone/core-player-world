@@ -1,0 +1,30 @@
+{
+  "name": "@civ-clone/core-player-world",
+  "version": "0.1.0",
+  "repository": "git@github.com:civ-clone/core-player-world.git",
+  "keywords": [
+    "typescript",
+    "civilization"
+  ],
+  "author": "dom111 <dom111@users.noreply.github.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "npm run ts:compile && npm run prettier:format",
+    "prettier:check": "prettier --config .prettierrc '**/*.ts'",
+    "prettier:format": "prettier --config .prettierrc '**/*.ts' --write",
+    "ts:compile": "tsc --build tsconfig.json"
+  },
+  "devDependencies": {
+    "prettier": "^2.1.2",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "@civ-clone/core-data-object": "^0.1.0",
+    "@civ-clone/core-player": "^0.1.0",
+    "@civ-clone/core-registry": "^0.1.0",
+    "@civ-clone/core-terrain": "^0.1.0",
+    "@civ-clone/core-world": "^0.1.0",
+    "@civ-clone/core-world-generator": "^0.1.0"
+  }
+}
