@@ -29,7 +29,7 @@ export class PlayerWorld extends World implements IPlayerWorld {
       return tile;
     }
 
-    return new UndiscoveredTile(x, y, this);
+    return new UndiscoveredTile(x, y, this as World);
   }
 
   player(): Player {
