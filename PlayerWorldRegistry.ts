@@ -21,7 +21,7 @@ export class PlayerWorldRegistry
 
     if (playerWorlds.length !== 1) {
       throw new TypeError(
-        `Wrong number of player worlds exist for player: ${String(player)}`
+        `Wrong number of player worlds exist for player: ${player.id()}`
       );
     }
 

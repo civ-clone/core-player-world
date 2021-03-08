@@ -10,7 +10,7 @@ class PlayerWorldRegistry extends EntityRegistry_1.EntityRegistry {
     getByPlayer(player) {
         const playerWorlds = this.getBy('player', player);
         if (playerWorlds.length !== 1) {
-            throw new TypeError(`Wrong number of player worlds exist for player: ${String(player)}`);
+            throw new TypeError(`Wrong number of player worlds exist for player: ${player.id()}`);
         }
         return playerWorlds[0];
     }
