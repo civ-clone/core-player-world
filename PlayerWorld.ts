@@ -1,4 +1,8 @@
 import {
+  DataObject,
+  IDataObject,
+} from '@civ-clone/core-data-object/DataObject';
+import {
   RuleRegistry,
   instance as ruleRegistryInstance,
 } from '@civ-clone/core-rule/RuleRegistry';
@@ -6,20 +10,30 @@ import {
   VisibilityChanged,
   IVisibilityChangedRegistry,
 } from './Rules/Player/VisibilityChanged';
-import { World, IWorld } from '@civ-clone/core-world/World';
-import Generator from '@civ-clone/core-world-generator/Generator';
+import { IRegistryFilter } from '@civ-clone/core-registry/Registry';
 import Player from '@civ-clone/core-player/Player';
+import PlayerTile from './PlayerTile';
 import Tile from '@civ-clone/core-world/Tile';
 import UndiscoveredTile from './UndiscoveredTile';
+import World from '@civ-clone/core-world/World';
 
-export interface IPlayerWorld extends IWorld {
-  get(x: number, y: number): Tile;
+export interface IPlayerWorld extends IDataObject {
+  filter(iterator: IRegistryFilter<PlayerTile>): PlayerTile[];
+  forEach(iterator: (item: PlayerTile, i: number) => void): void;
+  get(x: number, y: number): PlayerTile | UndiscoveredTile;
+  getByTile(tile: Tile): PlayerTile | null;
+  height(): number;
+  map(iterator: (item: PlayerTile, i: number) => any): any[];
   player(): Player;
+  register(...tiles: Tile[]): void;
+  tiles(): PlayerTile[];
+  width(): number;
 }
 
-export class PlayerWorld extends World implements IPlayerWorld {
+export class PlayerWorld extends DataObject implements IPlayerWorld {
   #player: Player;
   #ruleRegistry: RuleRegistry;
+  #tiles: PlayerTile[] = [];
   #world: World;
 
   constructor(
@@ -27,23 +41,61 @@ export class PlayerWorld extends World implements IPlayerWorld {
     world: World,
     ruleRegistry: RuleRegistry = ruleRegistryInstance
   ) {
-    super(new Generator(world.height(), world.width()));
+    super();
 
     this.#player = player;
     this.#world = world;
     this.#ruleRegistry = ruleRegistry;
+
+    this.addKey('height', 'tiles', 'width');
   }
 
-  get(x: number, y: number): Tile {
+  entries(): PlayerTile[] {
+    return this.#tiles;
+  }
+
+  filter(iterator: IRegistryFilter<PlayerTile>): PlayerTile[] {
+    return this.entries().filter(iterator);
+  }
+
+  forEach(iterator: (item: PlayerTile, i: number) => void): void {
+    return this.#tiles.forEach(iterator);
+  }
+
+  get(x: number, y: number): PlayerTile | UndiscoveredTile {
     const [tile] = this.entries().filter(
-      (tile: Tile): boolean => tile.x() === x && tile.y() === y
+      (tile: PlayerTile): boolean => tile.x() === x && tile.y() === y
     );
 
     if (tile) {
       return tile;
     }
 
-    return new UndiscoveredTile(x, y, this as World);
+    return new UndiscoveredTile(x, y, this.#world);
+  }
+
+  getByTile(tile: Tile): PlayerTile | null {
+    const [found] = this.filter(
+      (playerTile: PlayerTile) => playerTile.tile() === tile
+    );
+
+    return found ?? null;
+  }
+
+  height(): number {
+    return this.#world.height();
+  }
+
+  includes(tile: Tile | PlayerTile): boolean {
+    if (tile instanceof Tile) {
+      return !!this.getByTile(tile);
+    }
+
+    return this.#tiles.includes(tile);
+  }
+
+  map(iterator: (item: PlayerTile, i: number) => any): any[] {
+    return this.#tiles.map(iterator);
   }
 
   player(): Player {
@@ -53,7 +105,7 @@ export class PlayerWorld extends World implements IPlayerWorld {
   register(...tiles: Tile[]): void {
     tiles.forEach((tile: Tile) => {
       if (!this.includes(tile)) {
-        super.register(tile);
+        this.#tiles.push(new PlayerTile(tile, this.#player));
 
         (this.#ruleRegistry as IVisibilityChangedRegistry).process(
           VisibilityChanged,
@@ -62,6 +114,14 @@ export class PlayerWorld extends World implements IPlayerWorld {
         );
       }
     });
+  }
+
+  tiles(): PlayerTile[] {
+    return this.entries();
+  }
+
+  width(): number {
+    return this.#world.width();
   }
 }
 

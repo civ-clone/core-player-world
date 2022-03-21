@@ -1,6 +1,6 @@
 {
   "name": "@civ-clone/core-player-world",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "repository": "git@github.com:civ-clone/core-player-world.git",
   "keywords": [
     "typescript",
@@ -26,6 +26,6 @@
     "@civ-clone/core-rule": "^0.1.0",
     "@civ-clone/core-terrain": "^0.1.0",
     "@civ-clone/core-world": "^0.1.0",
-    "@civ-clone/core-world-generator": "^0.1.0"
+    "@civ-clone/core-yield": "^0.1.0"
   }
 }

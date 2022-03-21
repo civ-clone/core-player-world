@@ -9,7 +9,8 @@ export interface IPlayerWorldRegistry extends IEntityRegistry<PlayerWorld> {
 }
 export declare class PlayerWorldRegistry
   extends EntityRegistry<PlayerWorld>
-  implements IPlayerWorldRegistry {
+  implements IPlayerWorldRegistry
+{
   constructor();
   getByPlayer(player: Player): PlayerWorld;
 }

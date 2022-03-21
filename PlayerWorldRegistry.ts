@@ -11,7 +11,8 @@ export interface IPlayerWorldRegistry extends IEntityRegistry<PlayerWorld> {
 
 export class PlayerWorldRegistry
   extends EntityRegistry<PlayerWorld>
-  implements IPlayerWorldRegistry {
+  implements IPlayerWorldRegistry
+{
   constructor() {
     super(PlayerWorld);
   }
