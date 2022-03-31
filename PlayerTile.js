@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerTile = void 0;
 const AdditionalDataRegistry_1 = require("@civ-clone/core-data-object/AdditionalDataRegistry");
 const DataObject_1 = require("@civ-clone/core-data-object/DataObject");
-const YieldRegistry_1 = require("@civ-clone/core-yield/YieldRegistry");
 const Tile_1 = require("@civ-clone/core-world/Tile");
 class PlayerTile extends DataObject_1.DataObject {
     constructor(tile, player, additionalDataRegistry = AdditionalDataRegistry_1.instance) {
@@ -51,7 +50,7 @@ class PlayerTile extends DataObject_1.DataObject {
             .forEach((additionalData) => {
             __classPrivateFieldGet(this, _PlayerTile_additionalData, "f")[additionalData.key()] = additionalData.data(__classPrivateFieldGet(this, _PlayerTile_tile, "f"));
             Object.defineProperty(this, additionalData.key(), {
-                value: () => additionalData.data(__classPrivateFieldGet(this, _PlayerTile_tile, "f")) //this.#additionalData[additionalData.key()],
+                value: () => additionalData.data(__classPrivateFieldGet(this, _PlayerTile_tile, "f")), //this.#additionalData[additionalData.key()],
             });
             this.addKey(additionalData.key());
         });
@@ -75,8 +74,8 @@ class PlayerTile extends DataObject_1.DataObject {
     y() {
         return __classPrivateFieldGet(this, _PlayerTile_tile, "f").y();
     }
-    yields(yields = [], yieldRegistry = YieldRegistry_1.instance) {
-        return __classPrivateFieldGet(this, _PlayerTile_tile, "f").yields(__classPrivateFieldGet(this, _PlayerTile_player, "f"), yields, yieldRegistry);
+    yields() {
+        return __classPrivateFieldGet(this, _PlayerTile_tile, "f").yields(__classPrivateFieldGet(this, _PlayerTile_player, "f"));
     }
 }
 exports.PlayerTile = PlayerTile;

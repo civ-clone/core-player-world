@@ -37,6 +37,6 @@ export declare class PlayerTile extends DataObject implements IPlayerTile {
   update(): void;
   x(): number;
   y(): number;
-  yields(yields?: typeof Yield[], yieldRegistry?: YieldRegistry): Yield[];
+  yields(): Yield[];
 }
 export default PlayerTile;

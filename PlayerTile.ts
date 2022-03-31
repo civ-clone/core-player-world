@@ -113,11 +113,8 @@ export class PlayerTile extends DataObject implements IPlayerTile {
     return this.#tile.y();
   }
 
-  yields(
-    yields: typeof Yield[] = [],
-    yieldRegistry: YieldRegistry = yieldRegistryInstance
-  ): Yield[] {
-    return this.#tile.yields(this.#player, yields, yieldRegistry);
+  yields(): Yield[] {
+    return this.#tile.yields(this.#player);
   }
 }
 
