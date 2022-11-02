@@ -6,15 +6,12 @@ import {
   RuleRegistry,
   instance as ruleRegistryInstance,
 } from '@civ-clone/core-rule/RuleRegistry';
-import {
-  VisibilityChanged,
-  IVisibilityChangedRegistry,
-} from './Rules/Player/VisibilityChanged';
 import { IRegistryIterator } from '@civ-clone/core-registry/Registry';
 import Player from '@civ-clone/core-player/Player';
 import PlayerTile from './PlayerTile';
 import Tile from '@civ-clone/core-world/Tile';
 import UndiscoveredTile from './UndiscoveredTile';
+import VisibilityChanged from './Rules/Player/VisibilityChanged';
 import World from '@civ-clone/core-world/World';
 
 export interface IPlayerWorld extends IDataObject {
@@ -107,11 +104,7 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
       if (!this.includes(tile)) {
         this.#tiles.push(new PlayerTile(tile, this.#player));
 
-        (this.#ruleRegistry as IVisibilityChangedRegistry).process(
-          VisibilityChanged,
-          tile,
-          this.player()
-        );
+        this.#ruleRegistry.process(VisibilityChanged, tile, this.player());
       }
     });
   }

@@ -15,10 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerWorld = void 0;
 const DataObject_1 = require("@civ-clone/core-data-object/DataObject");
 const RuleRegistry_1 = require("@civ-clone/core-rule/RuleRegistry");
-const VisibilityChanged_1 = require("./Rules/Player/VisibilityChanged");
 const PlayerTile_1 = require("./PlayerTile");
 const Tile_1 = require("@civ-clone/core-world/Tile");
 const UndiscoveredTile_1 = require("./UndiscoveredTile");
+const VisibilityChanged_1 = require("./Rules/Player/VisibilityChanged");
 class PlayerWorld extends DataObject_1.DataObject {
     constructor(player, world, ruleRegistry = RuleRegistry_1.instance) {
         super();
@@ -70,7 +70,7 @@ class PlayerWorld extends DataObject_1.DataObject {
         tiles.forEach((tile) => {
             if (!this.includes(tile)) {
                 __classPrivateFieldGet(this, _PlayerWorld_tiles, "f").push(new PlayerTile_1.default(tile, __classPrivateFieldGet(this, _PlayerWorld_player, "f")));
-                __classPrivateFieldGet(this, _PlayerWorld_ruleRegistry, "f").process(VisibilityChanged_1.VisibilityChanged, tile, this.player());
+                __classPrivateFieldGet(this, _PlayerWorld_ruleRegistry, "f").process(VisibilityChanged_1.default, tile, this.player());
             }
         });
     }

@@ -3,7 +3,6 @@ import {
   DataObject,
   IDataObject,
 } from '@civ-clone/core-data-object/DataObject';
-import { YieldRegistry } from '@civ-clone/core-yield/YieldRegistry';
 import Player from '@civ-clone/core-player/Player';
 import Terrain from '@civ-clone/core-terrain/Terrain';
 import Tile from '@civ-clone/core-world/Tile';
@@ -17,7 +16,7 @@ export interface IPlayerTile extends IDataObject {
   update(): void;
   x(): number;
   y(): number;
-  yields(yields: typeof Yield[], yieldRegistry: YieldRegistry): Yield[];
+  yields(): Yield[];
 }
 export declare class PlayerTile extends DataObject implements IPlayerTile {
   #private;

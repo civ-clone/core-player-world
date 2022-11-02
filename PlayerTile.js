@@ -50,7 +50,7 @@ class PlayerTile extends DataObject_1.DataObject {
             .forEach((additionalData) => {
             __classPrivateFieldGet(this, _PlayerTile_additionalData, "f")[additionalData.key()] = additionalData.data(__classPrivateFieldGet(this, _PlayerTile_tile, "f"));
             Object.defineProperty(this, additionalData.key(), {
-                value: () => additionalData.data(__classPrivateFieldGet(this, _PlayerTile_tile, "f")), //this.#additionalData[additionalData.key()],
+                value: () => additionalData.data(__classPrivateFieldGet(this, _PlayerTile_tile, "f")),
             });
             this.addKey(additionalData.key());
         });
@@ -62,11 +62,8 @@ class PlayerTile extends DataObject_1.DataObject {
         return __classPrivateFieldGet(this, _PlayerTile_tile, "f");
     }
     update() {
-        __classPrivateFieldGet(this, _PlayerTile_additionalDataRegistry, "f")
-            .getByType(Tile_1.default)
-            .forEach((additionalData) => {
-            __classPrivateFieldGet(this, _PlayerTile_additionalData, "f")[additionalData.key()] = additionalData.data(__classPrivateFieldGet(this, _PlayerTile_tile, "f"));
-        });
+        __classPrivateFieldGet(this, _PlayerTile_tile, "f").clearYieldCache(__classPrivateFieldGet(this, _PlayerTile_player, "f"));
+        this.setAdditionalData();
     }
     x() {
         return __classPrivateFieldGet(this, _PlayerTile_tile, "f").x();

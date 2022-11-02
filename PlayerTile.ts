@@ -7,10 +7,6 @@ import {
   IDataObject,
   PlainObject,
 } from '@civ-clone/core-data-object/DataObject';
-import {
-  YieldRegistry,
-  instance as yieldRegistryInstance,
-} from '@civ-clone/core-yield/YieldRegistry';
 import AdditionalData from '@civ-clone/core-data-object/AdditionalData';
 import Player from '@civ-clone/core-player/Player';
 import Terrain from '@civ-clone/core-terrain/Terrain';
@@ -26,7 +22,7 @@ export interface IPlayerTile extends IDataObject {
   update(): void;
   x(): number;
   y(): number;
-  yields(yields: typeof Yield[], yieldRegistry: YieldRegistry): Yield[];
+  yields(): Yield[];
 }
 
 export class PlayerTile extends DataObject implements IPlayerTile {
@@ -80,7 +76,7 @@ export class PlayerTile extends DataObject implements IPlayerTile {
         );
 
         Object.defineProperty(this, additionalData.key(), {
-          value: () => additionalData.data(this.#tile), //this.#additionalData[additionalData.key()],
+          value: () => additionalData.data(this.#tile),
         });
 
         this.addKey(additionalData.key());
@@ -96,13 +92,9 @@ export class PlayerTile extends DataObject implements IPlayerTile {
   }
 
   update(): void {
-    this.#additionalDataRegistry
-      .getByType(Tile)
-      .forEach((additionalData: AdditionalData): void => {
-        this.#additionalData[additionalData.key()] = additionalData.data(
-          this.#tile
-        );
-      });
+    this.#tile.clearYieldCache(this.#player);
+
+    this.setAdditionalData();
   }
 
   x(): number {
