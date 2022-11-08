@@ -50,6 +50,7 @@ class PlayerTile extends DataObject_1.DataObject {
             .forEach((additionalData) => {
             __classPrivateFieldGet(this, _PlayerTile_additionalData, "f")[additionalData.key()] = additionalData.data(__classPrivateFieldGet(this, _PlayerTile_tile, "f"));
             Object.defineProperty(this, additionalData.key(), {
+                configurable: true,
                 value: () => additionalData.data(__classPrivateFieldGet(this, _PlayerTile_tile, "f")),
             });
             this.addKey(additionalData.key());

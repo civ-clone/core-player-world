@@ -76,6 +76,7 @@ export class PlayerTile extends DataObject implements IPlayerTile {
         );
 
         Object.defineProperty(this, additionalData.key(), {
+          configurable: true,
           value: () => additionalData.data(this.#tile),
         });
 
