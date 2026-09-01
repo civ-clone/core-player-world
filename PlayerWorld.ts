@@ -28,10 +28,10 @@ export interface IPlayerWorld extends IDataObject {
 }
 
 export class PlayerWorld extends DataObject implements IPlayerWorld {
-  #player: Player;
-  #ruleRegistry: RuleRegistry;
-  #tiles: PlayerTile[] = [];
-  #world: World;
+  private _player: Player;
+  private _ruleRegistry: RuleRegistry;
+  private _tiles: PlayerTile[] = [];
+  private _world: World;
 
   constructor(
     player: Player,
@@ -40,15 +40,15 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
   ) {
     super();
 
-    this.#player = player;
-    this.#world = world;
-    this.#ruleRegistry = ruleRegistry;
+    this._player = player;
+    this._world = world;
+    this._ruleRegistry = ruleRegistry;
 
     this.addKey('height', 'tiles', 'width');
   }
 
   entries(): PlayerTile[] {
-    return this.#tiles;
+    return this._tiles;
   }
 
   filter(iterator: IRegistryIterator<PlayerTile>): PlayerTile[] {
@@ -56,7 +56,7 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
   }
 
   forEach(iterator: (item: PlayerTile, i: number) => void): void {
-    return this.#tiles.forEach(iterator);
+    return this._tiles.forEach(iterator);
   }
 
   get(x: number, y: number): PlayerTile | UndiscoveredTile {
@@ -68,7 +68,7 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
       return tile;
     }
 
-    return new UndiscoveredTile(x, y, this.#world);
+    return new UndiscoveredTile(x, y, this._world);
   }
 
   getByTile(tile: Tile): PlayerTile | null {
@@ -80,7 +80,7 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
   }
 
   height(): number {
-    return this.#world.height();
+    return this._world.height();
   }
 
   includes(tile: Tile | PlayerTile): boolean {
@@ -88,23 +88,23 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
       return !!this.getByTile(tile);
     }
 
-    return this.#tiles.includes(tile);
+    return this._tiles.includes(tile);
   }
 
   map(iterator: (item: PlayerTile, i: number) => any): any[] {
-    return this.#tiles.map(iterator);
+    return this._tiles.map(iterator);
   }
 
   player(): Player {
-    return this.#player;
+    return this._player;
   }
 
   register(...tiles: Tile[]): void {
     tiles.forEach((tile: Tile) => {
       if (!this.includes(tile)) {
-        this.#tiles.push(new PlayerTile(tile, this.#player));
+        this._tiles.push(new PlayerTile(tile, this._player));
 
-        this.#ruleRegistry.process(VisibilityChanged, tile, this.player());
+        this._ruleRegistry.process(VisibilityChanged, tile, this.player());
       }
     });
   }
@@ -114,7 +114,7 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
   }
 
   width(): number {
-    return this.#world.width();
+    return this._world.width();
   }
 }
 

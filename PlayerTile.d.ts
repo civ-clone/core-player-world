@@ -19,7 +19,10 @@ export interface IPlayerTile extends IDataObject {
   yields(): Yield[];
 }
 export declare class PlayerTile extends DataObject implements IPlayerTile {
-  #private;
+  private _additionalData;
+  private _additionalDataRegistry;
+  private _player;
+  private _tile;
   constructor(
     tile: Tile,
     player: Player,

@@ -26,10 +26,10 @@ export interface IPlayerTile extends IDataObject {
 }
 
 export class PlayerTile extends DataObject implements IPlayerTile {
-  #additionalData: PlainObject = {};
-  #additionalDataRegistry: AdditionalDataRegistry;
-  #player: Player;
-  #tile: Tile;
+  private _additionalData: PlainObject = {};
+  private _additionalDataRegistry: AdditionalDataRegistry;
+  private _player: Player;
+  private _tile: Tile;
 
   constructor(
     tile: Tile,
@@ -38,9 +38,9 @@ export class PlayerTile extends DataObject implements IPlayerTile {
   ) {
     super();
 
-    this.#additionalDataRegistry = additionalDataRegistry;
-    this.#player = player;
-    this.#tile = tile;
+    this._additionalDataRegistry = additionalDataRegistry;
+    this._player = player;
+    this._tile = tile;
 
     this.addKey('isCoast', 'isLand', 'isWater', 'terrain', 'x', 'y', 'yields');
 
@@ -52,32 +52,32 @@ export class PlayerTile extends DataObject implements IPlayerTile {
   }
 
   isCoast(): boolean {
-    return this.#tile.isCoast();
+    return this._tile.isCoast();
   }
 
   isLand(): boolean {
-    return this.#tile.isLand();
+    return this._tile.isLand();
   }
 
   isWater(): boolean {
-    return this.#tile.isWater();
+    return this._tile.isWater();
   }
 
   player(): Player {
-    return this.#player;
+    return this._player;
   }
 
   private setAdditionalData(): void {
-    this.#additionalDataRegistry
+    this._additionalDataRegistry
       .getByType(Tile)
       .forEach((additionalData: AdditionalData): void => {
-        this.#additionalData[additionalData.key()] = additionalData.data(
-          this.#tile
+        this._additionalData[additionalData.key()] = additionalData.data(
+          this._tile
         );
 
         Object.defineProperty(this, additionalData.key(), {
           configurable: true,
-          value: () => additionalData.data(this.#tile),
+          value: () => additionalData.data(this._tile),
         });
 
         this.addKey(additionalData.key());
@@ -85,29 +85,29 @@ export class PlayerTile extends DataObject implements IPlayerTile {
   }
 
   terrain(): Terrain {
-    return this.#tile.terrain();
+    return this._tile.terrain();
   }
 
   tile(): Tile {
-    return this.#tile;
+    return this._tile;
   }
 
   update(): void {
-    this.#tile.clearYieldCache(this.#player);
+    this._tile.clearYieldCache(this._player);
 
     this.setAdditionalData();
   }
 
   x(): number {
-    return this.#tile.x();
+    return this._tile.x();
   }
 
   y(): number {
-    return this.#tile.y();
+    return this._tile.y();
   }
 
   yields(): Yield[] {
-    return this.#tile.yields(this.#player);
+    return this._tile.yields(this._player);
   }
 }
 

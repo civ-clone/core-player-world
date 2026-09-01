@@ -22,7 +22,10 @@ export interface IPlayerWorld extends IDataObject {
   width(): number;
 }
 export declare class PlayerWorld extends DataObject implements IPlayerWorld {
-  #private;
+  private _player;
+  private _ruleRegistry;
+  private _tiles;
+  private _world;
   constructor(player: Player, world: World, ruleRegistry?: RuleRegistry);
   entries(): PlayerTile[];
   filter(iterator: IRegistryIterator<PlayerTile>): PlayerTile[];
