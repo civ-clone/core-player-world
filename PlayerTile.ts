@@ -14,6 +14,7 @@ import Yield from '@civ-clone/core-yield/Yield';
 
 export interface IPlayerTile extends IDataObject {
   isCoast(): boolean;
+  onHydrated(): void;
   isLand(): boolean;
   isWater(): boolean;
   terrain(): Terrain;
@@ -66,7 +67,27 @@ export class PlayerTile extends DataObject implements IPlayerTile {
     return this._player;
   }
 
-  private setAdditionalData(): void {
+  /**
+   * Reinstall the additional-data accessors after generic hydration.
+   *
+   * `Game.inject` calls this if a class defines it, and `PlayerTile` is the
+   * only class in the engine that does — because it is the only one that builds
+   * per-instance structure in its constructor.
+   *
+   * The accessors are installed with `Object.defineProperty` and so are
+   * non-enumerable: `stateKeys()` never sees them, the save never carries them,
+   * and a hydrated `PlayerTile` would have `_keys` naming methods that do not
+   * exist. `toPlainObject()` walks `keys()` and calls each one, so the first
+   * thing to break would be the payload sent to the renderer.
+   *
+   * `false` because the keys come back with the save; re-adding them would
+   * duplicate every one.
+   */
+  onHydrated(): void {
+    this.setAdditionalData(false);
+  }
+
+  private setAdditionalData(addKeys: boolean = true): void {
     this._additionalDataRegistry
       .getByType(Tile)
       .forEach((additionalData: AdditionalData): void => {
@@ -75,7 +96,9 @@ export class PlayerTile extends DataObject implements IPlayerTile {
           value: () => additionalData.data(this._tile),
         });
 
-        this.addKey(additionalData.key());
+        if (addKeys) {
+          this.addKey(additionalData.key());
+        }
       });
   }
 
