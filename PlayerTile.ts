@@ -5,7 +5,6 @@ import {
 import {
   DataObject,
   IDataObject,
-  PlainObject,
 } from '@civ-clone/core-data-object/DataObject';
 import AdditionalData from '@civ-clone/core-data-object/AdditionalData';
 import Player from '@civ-clone/core-player/Player';
@@ -27,7 +26,6 @@ export interface IPlayerTile extends IDataObject {
 
 export class PlayerTile extends DataObject implements IPlayerTile {
   static readonly transient = ['_additionalDataRegistry'];
-  private _additionalData: PlainObject = {};
   private _additionalDataRegistry: AdditionalDataRegistry;
   private _player: Player;
   private _tile: Tile;
@@ -72,10 +70,6 @@ export class PlayerTile extends DataObject implements IPlayerTile {
     this._additionalDataRegistry
       .getByType(Tile)
       .forEach((additionalData: AdditionalData): void => {
-        this._additionalData[additionalData.key()] = additionalData.data(
-          this._tile
-        );
-
         Object.defineProperty(this, additionalData.key(), {
           configurable: true,
           value: () => additionalData.data(this._tile),

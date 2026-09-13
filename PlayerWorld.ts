@@ -49,7 +49,11 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
   }
 
   entries(): PlayerTile[] {
-    return this._tiles;
+    // A copy, matching `World.entries()` — which delegates to
+    // `EntityRegistry.entries()` and so has always returned `_entries.slice()`.
+    // Handing out the array itself let a caller reorder or empty a player's
+    // discovered tiles through what reads as a getter.
+    return this._tiles.slice();
   }
 
   filter(iterator: IRegistryIterator<PlayerTile>): PlayerTile[] {

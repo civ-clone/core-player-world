@@ -7,7 +7,6 @@ const Tile_1 = require("@civ-clone/core-world/Tile");
 class PlayerTile extends DataObject_1.DataObject {
     constructor(tile, player, additionalDataRegistry = AdditionalDataRegistry_1.instance) {
         super();
-        this._additionalData = {};
         this._additionalDataRegistry = additionalDataRegistry;
         this._player = player;
         this._tile = tile;
@@ -33,7 +32,6 @@ class PlayerTile extends DataObject_1.DataObject {
         this._additionalDataRegistry
             .getByType(Tile_1.default)
             .forEach((additionalData) => {
-            this._additionalData[additionalData.key()] = additionalData.data(this._tile);
             Object.defineProperty(this, additionalData.key(), {
                 configurable: true,
                 value: () => additionalData.data(this._tile),

@@ -17,7 +17,11 @@ class PlayerWorld extends DataObject_1.DataObject {
         this.addKey('height', 'tiles', 'width');
     }
     entries() {
-        return this._tiles;
+        // A copy, matching `World.entries()` — which delegates to
+        // `EntityRegistry.entries()` and so has always returned `_entries.slice()`.
+        // Handing out the array itself let a caller reorder or empty a player's
+        // discovered tiles through what reads as a getter.
+        return this._tiles.slice();
     }
     filter(iterator) {
         return this.entries().filter(iterator);
