@@ -22,6 +22,7 @@ export interface IPlayerWorld extends IDataObject {
   width(): number;
 }
 export declare class PlayerWorld extends DataObject implements IPlayerWorld {
+  static readonly transient: string[];
   private _player;
   private _ruleRegistry;
   private _tiles;

@@ -28,6 +28,7 @@ export interface IPlayerWorld extends IDataObject {
 }
 
 export class PlayerWorld extends DataObject implements IPlayerWorld {
+  static readonly transient = ['_ruleRegistry'];
   private _player: Player;
   private _ruleRegistry: RuleRegistry;
   private _tiles: PlayerTile[] = [];

@@ -19,6 +19,7 @@ export interface IPlayerTile extends IDataObject {
   yields(): Yield[];
 }
 export declare class PlayerTile extends DataObject implements IPlayerTile {
+  static readonly transient: string[];
   private _additionalData;
   private _additionalDataRegistry;
   private _player;

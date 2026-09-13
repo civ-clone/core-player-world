@@ -67,5 +67,6 @@ class PlayerWorld extends DataObject_1.DataObject {
     }
 }
 exports.PlayerWorld = PlayerWorld;
+PlayerWorld.transient = ['_ruleRegistry'];
 exports.default = PlayerWorld;
 //# sourceMappingURL=PlayerWorld.js.map

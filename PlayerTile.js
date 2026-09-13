@@ -62,5 +62,6 @@ class PlayerTile extends DataObject_1.DataObject {
     }
 }
 exports.PlayerTile = PlayerTile;
+PlayerTile.transient = ['_additionalDataRegistry'];
 exports.default = PlayerTile;
 //# sourceMappingURL=PlayerTile.js.map

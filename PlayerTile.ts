@@ -26,6 +26,7 @@ export interface IPlayerTile extends IDataObject {
 }
 
 export class PlayerTile extends DataObject implements IPlayerTile {
+  static readonly transient = ['_additionalDataRegistry'];
   private _additionalData: PlainObject = {};
   private _additionalDataRegistry: AdditionalDataRegistry;
   private _player: Player;
