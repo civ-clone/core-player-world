@@ -28,7 +28,12 @@ export interface IPlayerWorld extends IDataObject {
 }
 
 export class PlayerWorld extends DataObject implements IPlayerWorld {
-  static readonly transient = ['_ruleRegistry'];
+  // The two lookups are transient: they are derived from `_tiles`, which is
+  // the saved state, and a `Map` cannot be written to a file anyway. Rebuilt
+  // in `onHydrated`.
+  static readonly transient = ['_byPosition', '_byTile', '_ruleRegistry'];
+  private _byPosition: Map<number, PlayerTile> = new Map();
+  private _byTile: Map<Tile, PlayerTile> = new Map();
   private _player: Player;
   private _ruleRegistry: RuleRegistry;
   private _tiles: PlayerTile[] = [];
@@ -64,24 +69,27 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
     return this._tiles.forEach(iterator);
   }
 
+  /**
+   * By position, not by scanning every tile the player has seen.
+   *
+   * This and `getByTile` are called for every tile a unit can see, on every
+   * move — and `register` asks `includes`, which asks `getByTile`, for every
+   * visible tile as well. Each was a filter over the whole discovered world,
+   * so a player who had explored more paid more to move.
+   */
   get(x: number, y: number): PlayerTile | UndiscoveredTile {
-    const [tile] = this.entries().filter(
-      (tile: PlayerTile): boolean => tile.x() === x && tile.y() === y
+    return (
+      this._byPosition.get(this.position(x, y)) ??
+      new UndiscoveredTile(x, y, this._world)
     );
+  }
 
-    if (tile) {
-      return tile;
-    }
-
-    return new UndiscoveredTile(x, y, this._world);
+  private position(x: number, y: number): number {
+    return y * this._world.width() + x;
   }
 
   getByTile(tile: Tile): PlayerTile | null {
-    const [found] = this.filter(
-      (playerTile: PlayerTile) => playerTile.tile() === tile
-    );
-
-    return found ?? null;
+    return this._byTile.get(tile) ?? null;
   }
 
   height(): number {
@@ -107,11 +115,32 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
   register(...tiles: Tile[]): void {
     tiles.forEach((tile: Tile) => {
       if (!this.includes(tile)) {
-        this._tiles.push(new PlayerTile(tile, this._player));
+        const playerTile = new PlayerTile(tile, this._player);
+
+        this._tiles.push(playerTile);
+        this.remember(playerTile);
 
         this._ruleRegistry.process(VisibilityChanged, tile, this.player());
       }
     });
+  }
+
+  private remember(playerTile: PlayerTile): void {
+    this._byTile.set(playerTile.tile(), playerTile);
+    this._byPosition.set(
+      this.position(playerTile.x(), playerTile.y()),
+      playerTile
+    );
+  }
+
+  /** The lookups are derived, so a load rebuilds them from the restored tiles. */
+  onHydrated(): void {
+    this._byPosition = new Map();
+    this._byTile = new Map();
+
+    this._tiles.forEach((playerTile: PlayerTile): void =>
+      this.remember(playerTile)
+    );
   }
 
   tiles(): PlayerTile[] {

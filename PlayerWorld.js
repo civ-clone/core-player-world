@@ -10,6 +10,8 @@ const VisibilityChanged_1 = require("./Rules/Player/VisibilityChanged");
 class PlayerWorld extends DataObject_1.DataObject {
     constructor(player, world, ruleRegistry = RuleRegistry_1.instance) {
         super();
+        this._byPosition = new Map();
+        this._byTile = new Map();
         this._tiles = [];
         this._player = player;
         this._world = world;
@@ -29,16 +31,24 @@ class PlayerWorld extends DataObject_1.DataObject {
     forEach(iterator) {
         return this._tiles.forEach(iterator);
     }
+    /**
+     * By position, not by scanning every tile the player has seen.
+     *
+     * This and `getByTile` are called for every tile a unit can see, on every
+     * move — and `register` asks `includes`, which asks `getByTile`, for every
+     * visible tile as well. Each was a filter over the whole discovered world,
+     * so a player who had explored more paid more to move.
+     */
     get(x, y) {
-        const [tile] = this.entries().filter((tile) => tile.x() === x && tile.y() === y);
-        if (tile) {
-            return tile;
-        }
-        return new UndiscoveredTile_1.default(x, y, this._world);
+        var _a;
+        return ((_a = this._byPosition.get(this.position(x, y))) !== null && _a !== void 0 ? _a : new UndiscoveredTile_1.default(x, y, this._world));
+    }
+    position(x, y) {
+        return y * this._world.width() + x;
     }
     getByTile(tile) {
-        const [found] = this.filter((playerTile) => playerTile.tile() === tile);
-        return found !== null && found !== void 0 ? found : null;
+        var _a;
+        return (_a = this._byTile.get(tile)) !== null && _a !== void 0 ? _a : null;
     }
     height() {
         return this._world.height();
@@ -58,10 +68,22 @@ class PlayerWorld extends DataObject_1.DataObject {
     register(...tiles) {
         tiles.forEach((tile) => {
             if (!this.includes(tile)) {
-                this._tiles.push(new PlayerTile_1.default(tile, this._player));
+                const playerTile = new PlayerTile_1.default(tile, this._player);
+                this._tiles.push(playerTile);
+                this.remember(playerTile);
                 this._ruleRegistry.process(VisibilityChanged_1.default, tile, this.player());
             }
         });
+    }
+    remember(playerTile) {
+        this._byTile.set(playerTile.tile(), playerTile);
+        this._byPosition.set(this.position(playerTile.x(), playerTile.y()), playerTile);
+    }
+    /** The lookups are derived, so a load rebuilds them from the restored tiles. */
+    onHydrated() {
+        this._byPosition = new Map();
+        this._byTile = new Map();
+        this._tiles.forEach((playerTile) => this.remember(playerTile));
     }
     tiles() {
         return this.entries();
@@ -71,6 +93,9 @@ class PlayerWorld extends DataObject_1.DataObject {
     }
 }
 exports.PlayerWorld = PlayerWorld;
-PlayerWorld.transient = ['_ruleRegistry'];
+// The two lookups are transient: they are derived from `_tiles`, which is
+// the saved state, and a `Map` cannot be written to a file anyway. Rebuilt
+// in `onHydrated`.
+PlayerWorld.transient = ['_byPosition', '_byTile', '_ruleRegistry'];
 exports.default = PlayerWorld;
 //# sourceMappingURL=PlayerWorld.js.map

@@ -23,6 +23,8 @@ export interface IPlayerWorld extends IDataObject {
 }
 export declare class PlayerWorld extends DataObject implements IPlayerWorld {
   static readonly transient: string[];
+  private _byPosition;
+  private _byTile;
   private _player;
   private _ruleRegistry;
   private _tiles;
@@ -31,13 +33,25 @@ export declare class PlayerWorld extends DataObject implements IPlayerWorld {
   entries(): PlayerTile[];
   filter(iterator: IRegistryIterator<PlayerTile>): PlayerTile[];
   forEach(iterator: (item: PlayerTile, i: number) => void): void;
+  /**
+   * By position, not by scanning every tile the player has seen.
+   *
+   * This and `getByTile` are called for every tile a unit can see, on every
+   * move — and `register` asks `includes`, which asks `getByTile`, for every
+   * visible tile as well. Each was a filter over the whole discovered world,
+   * so a player who had explored more paid more to move.
+   */
   get(x: number, y: number): PlayerTile | UndiscoveredTile;
+  private position;
   getByTile(tile: Tile): PlayerTile | null;
   height(): number;
   includes(tile: Tile | PlayerTile): boolean;
   map(iterator: (item: PlayerTile, i: number) => any): any[];
   player(): Player;
   register(...tiles: Tile[]): void;
+  private remember;
+  /** The lookups are derived, so a load rebuilds them from the restored tiles. */
+  onHydrated(): void;
   tiles(): PlayerTile[];
   width(): number;
 }
