@@ -20,6 +20,7 @@ export interface IPlayerWorld extends IDataObject {
   register(...tiles: Tile[]): void;
   tiles(): PlayerTile[];
   width(): number;
+  world(): World;
 }
 export declare class PlayerWorld extends DataObject implements IPlayerWorld {
   static readonly transient: string[];
@@ -48,6 +49,11 @@ export declare class PlayerWorld extends DataObject implements IPlayerWorld {
   includes(tile: Tile | PlayerTile): boolean;
   map(iterator: (item: PlayerTile, i: number) => any): any[];
   player(): Player;
+  /**
+   * The world this is the player's view of. Not a key, so it isn't sent with the view: it's for the engine, which has
+   * no other way back to the world from a running or loaded game, to add a player to it (civ-clone/web-renderer#168).
+   */
+  world(): World;
   register(...tiles: Tile[]): void;
   private remember;
   /** The lookups are derived, so a load rebuilds them from the restored tiles. */

@@ -65,6 +65,13 @@ class PlayerWorld extends DataObject_1.DataObject {
     player() {
         return this._player;
     }
+    /**
+     * The world this is the player's view of. Not a key, so it isn't sent with the view: it's for the engine, which has
+     * no other way back to the world from a running or loaded game, to add a player to it (civ-clone/web-renderer#168).
+     */
+    world() {
+        return this._world;
+    }
     register(...tiles) {
         tiles.forEach((tile) => {
             if (!this.includes(tile)) {

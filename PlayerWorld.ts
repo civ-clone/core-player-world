@@ -25,6 +25,7 @@ export interface IPlayerWorld extends IDataObject {
   register(...tiles: Tile[]): void;
   tiles(): PlayerTile[];
   width(): number;
+  world(): World;
 }
 
 export class PlayerWorld extends DataObject implements IPlayerWorld {
@@ -110,6 +111,14 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
 
   player(): Player {
     return this._player;
+  }
+
+  /**
+   * The world this is the player's view of. Not a key, so it isn't sent with the view: it's for the engine, which has
+   * no other way back to the world from a running or loaded game, to add a player to it (civ-clone/web-renderer#168).
+   */
+  world(): World {
+    return this._world;
   }
 
   register(...tiles: Tile[]): void {
