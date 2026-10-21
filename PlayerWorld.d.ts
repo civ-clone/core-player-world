@@ -4,6 +4,7 @@ import {
 } from '@civ-clone/core-data-object/DataObject';
 import { RuleRegistry } from '@civ-clone/core-rule/RuleRegistry';
 import { IRegistryIterator } from '@civ-clone/core-registry/Registry';
+import { TopologyId } from '@civ-clone/core-world/Topology';
 import Player from '@civ-clone/core-player/Player';
 import PlayerTile from './PlayerTile';
 import Tile from '@civ-clone/core-world/Tile';
@@ -19,6 +20,7 @@ export interface IPlayerWorld extends IDataObject {
   player(): Player;
   register(...tiles: Tile[]): void;
   tiles(): PlayerTile[];
+  topologyId(): TopologyId;
   width(): number;
 }
 export declare class PlayerWorld extends DataObject implements IPlayerWorld {
@@ -50,9 +52,21 @@ export declare class PlayerWorld extends DataObject implements IPlayerWorld {
   player(): Player;
   register(...tiles: Tile[]): void;
   private remember;
-  /** The lookups are derived, so a load rebuilds them from the restored tiles. */
+  /**
+   * The lookups are derived, so a load rebuilds them from the restored tiles.
+   *
+   * A save carries each object's keys, and one made before `topologyId` was a
+   * key restores them without it: such a game would never send the client its
+   * grid, and every later save would carry the same keys. So it is added here
+   * when missing. `World` reports `'square'` for a world from such a save.
+   */
   onHydrated(): void;
   tiles(): PlayerTile[];
+  /**
+   * Which grid the world is on, so that a client, which is sent this rather
+   * than the `World`, knows how its squares neighbour each other.
+   */
+  topologyId(): TopologyId;
   width(): number;
 }
 export default PlayerWorld;
