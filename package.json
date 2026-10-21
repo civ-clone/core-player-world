@@ -13,10 +13,17 @@
     "build": "npm run ts:compile && npm run prettier:format",
     "prettier:check": "prettier --config .prettierrc '**/*.ts'",
     "prettier:format": "prettier --config .prettierrc '**/*.ts' --write",
+    "test": "ts-mocha ./tests/*.test.ts",
     "ts:compile": "tsc --build tsconfig.json"
   },
   "devDependencies": {
+    "@civ-clone/core-world-generator": "^0.1.6",
+    "@types/chai": "^4.0.0",
+    "@types/mocha": "^10.0.0",
+    "chai": "^4.0.0",
+    "mocha": "^10.0.0",
     "prettier": "^2.1.2",
+    "ts-mocha": "^10.0.0",
     "typescript": "^4.0.3"
   },
   "dependencies": {
@@ -25,7 +32,7 @@
     "@civ-clone/core-registry": "^0.1.0",
     "@civ-clone/core-rule": "^0.1.0",
     "@civ-clone/core-terrain": "^0.1.0",
-    "@civ-clone/core-world": "^0.1.0",
+    "@civ-clone/core-world": "^0.1.21",
     "@civ-clone/core-yield": "^0.1.0"
   }
 }

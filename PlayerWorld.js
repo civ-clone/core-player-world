@@ -16,7 +16,7 @@ class PlayerWorld extends DataObject_1.DataObject {
         this._player = player;
         this._world = world;
         this._ruleRegistry = ruleRegistry;
-        this.addKey('height', 'tiles', 'width');
+        this.addKey('height', 'tiles', 'topologyId', 'width');
     }
     entries() {
         // A copy, matching `World.entries()` — which delegates to
@@ -79,14 +79,31 @@ class PlayerWorld extends DataObject_1.DataObject {
         this._byTile.set(playerTile.tile(), playerTile);
         this._byPosition.set(this.position(playerTile.x(), playerTile.y()), playerTile);
     }
-    /** The lookups are derived, so a load rebuilds them from the restored tiles. */
+    /**
+     * The lookups are derived, so a load rebuilds them from the restored tiles.
+     *
+     * A save carries each object's keys, and one made before `topologyId` was a
+     * key restores them without it: such a game would never send the client its
+     * grid, and every later save would carry the same keys. So it is added here
+     * when missing. `World` reports `'square'` for a world from such a save.
+     */
     onHydrated() {
         this._byPosition = new Map();
         this._byTile = new Map();
         this._tiles.forEach((playerTile) => this.remember(playerTile));
+        if (!this.keys().includes('topologyId')) {
+            this.addKey('topologyId');
+        }
     }
     tiles() {
         return this.entries();
+    }
+    /**
+     * Which grid the world is on, so that a client, which is sent this rather
+     * than the `World`, knows how its squares neighbour each other.
+     */
+    topologyId() {
+        return this._world.topologyId();
     }
     width() {
         return this._world.width();

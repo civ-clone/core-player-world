@@ -7,6 +7,7 @@ import {
   instance as ruleRegistryInstance,
 } from '@civ-clone/core-rule/RuleRegistry';
 import { IRegistryIterator } from '@civ-clone/core-registry/Registry';
+import { TopologyId } from '@civ-clone/core-world/Topology';
 import Player from '@civ-clone/core-player/Player';
 import PlayerTile from './PlayerTile';
 import Tile from '@civ-clone/core-world/Tile';
@@ -24,6 +25,7 @@ export interface IPlayerWorld extends IDataObject {
   player(): Player;
   register(...tiles: Tile[]): void;
   tiles(): PlayerTile[];
+  topologyId(): TopologyId;
   width(): number;
 }
 
@@ -50,7 +52,7 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
     this._world = world;
     this._ruleRegistry = ruleRegistry;
 
-    this.addKey('height', 'tiles', 'width');
+    this.addKey('height', 'tiles', 'topologyId', 'width');
   }
 
   entries(): PlayerTile[] {
@@ -133,7 +135,14 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
     );
   }
 
-  /** The lookups are derived, so a load rebuilds them from the restored tiles. */
+  /**
+   * The lookups are derived, so a load rebuilds them from the restored tiles.
+   *
+   * A save carries each object's keys, and one made before `topologyId` was a
+   * key restores them without it: such a game would never send the client its
+   * grid, and every later save would carry the same keys. So it is added here
+   * when missing. `World` reports `'square'` for a world from such a save.
+   */
   onHydrated(): void {
     this._byPosition = new Map();
     this._byTile = new Map();
@@ -141,10 +150,22 @@ export class PlayerWorld extends DataObject implements IPlayerWorld {
     this._tiles.forEach((playerTile: PlayerTile): void =>
       this.remember(playerTile)
     );
+
+    if (!this.keys().includes('topologyId')) {
+      this.addKey('topologyId');
+    }
   }
 
   tiles(): PlayerTile[] {
     return this.entries();
+  }
+
+  /**
+   * Which grid the world is on, so that a client, which is sent this rather
+   * than the `World`, knows how its squares neighbour each other.
+   */
+  topologyId(): TopologyId {
+    return this._world.topologyId();
   }
 
   width(): number {
